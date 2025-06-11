@@ -21,7 +21,7 @@ Re = unc_params.Re
 Wi= unc_params.Wi
 beta=unc_params.beta
 eps = unc_params.eps
-Sc=unc_params.Sc
+kappa=unc_params.kappa
 Deltat0=unc_params.Deltat0
 ptbnmag=unc_params.ptbnmag
 
@@ -49,7 +49,6 @@ dtype = np.float64
 # Substitutions for coefficients
 coef_s = beta/Re # Solvent viscous coefficient
 coef_p = (1.0-beta)/(Re*Wi) # Polymeric coefficient
-ooSc = 1.0/Sc
 ooWi = 1.0/Wi
 
 # Bases
@@ -101,11 +100,11 @@ problem.add_equation("dt(u1) + dx(p1) - coef_s*lap(u1) - coef_p*(dx(cxx1)+dy(cxy
         -u1*dx(u1) - v1*dy(u1) + bforcex")
 problem.add_equation("dt(v1) + dy(p1) - coef_s*lap(v1) - coef_p*(dx(cxy1)+dy(cyy1)) = \
         -u1*dx(v1) - v1*dy(v1) + bforcey")                
-problem.add_equation("dt(cxx1) - ooSc*lap(cxx1) = - u1*dx(cxx1) - v1*dy(cxx1) + 2.0*cxx1*dx(u1) + 2.0*cxy1*dy(u1) \
+problem.add_equation("dt(cxx1) - kappa*lap(cxx1) = - u1*dx(cxx1) - v1*dy(cxx1) + 2.0*cxx1*dx(u1) + 2.0*cxy1*dy(u1) \
         - (cxx1-1.0)*(1.0-2.0*eps+eps*(cxx1+cyy1))*ooWi")
-problem.add_equation("dt(cxy1) - ooSc*lap(cxy1) = - u1*dx(cxy1) - v1*dy(cxy1) + cxx1*dx(v1) + cyy1*dy(u1) \
+problem.add_equation("dt(cxy1) - kappa*lap(cxy1) = - u1*dx(cxy1) - v1*dy(cxy1) + cxx1*dx(v1) + cyy1*dy(u1) \
         + cxy1*(dx(u1)+dy(v1)) - (cxy1)*(1.0-2.0*eps+eps*(cxx1+cyy1))*ooWi")
-problem.add_equation("dt(cyy1) - ooSc*lap(cyy1) = - u1*dx(cyy1) - v1*dy(cyy1) + 2.0*cxy1*dx(v1) + 2.0*cyy1*dy(v1) \
+problem.add_equation("dt(cyy1) - kappa*lap(cyy1) = - u1*dx(cyy1) - v1*dy(cyy1) + 2.0*cxy1*dx(v1) + 2.0*cyy1*dy(v1) \
         - (cyy1-1.0)*(1.0-2.0*eps+eps*(cxx1+cyy1))*ooWi") 
 
 problem.add_equation("dx(u1) + dy(v1) + tau_p1 = 0")  # Divergence free condition
@@ -116,11 +115,11 @@ problem.add_equation("dt(u2) + dx(p2) - coef_s*lap(u2) - coef_p*(dx(cxx2)+dy(cxy
         -u2*dx(u2) - v2*dy(u2) + bforcex")
 problem.add_equation("dt(v2) + dy(p2) - coef_s*lap(v2) - coef_p*(dx(cxy2)+dy(cyy2)) = \
         -u2*dx(v2) - v2*dy(v2) + bforcey")                
-problem.add_equation("dt(cxx2) - ooSc*lap(cxx2) = - u2*dx(cxx2) - v2*dy(cxx2) + 2.0*cxx2*dx(u2) + 2.0*cxy2*dy(u2) \
+problem.add_equation("dt(cxx2) - kappa*lap(cxx2) = - u2*dx(cxx2) - v2*dy(cxx2) + 2.0*cxx2*dx(u2) + 2.0*cxy2*dy(u2) \
         - (cxx2-1.0)*(1.0-2.0*eps+eps*(cxx2+cyy2))*ooWi - lap(lap(cxx2))*ft")
-problem.add_equation("dt(cxy2) - ooSc*lap(cxy2) = - u2*dx(cxy2) - v2*dy(cxy2) + cxx2*dx(v2) + cyy2*dy(u2) \
+problem.add_equation("dt(cxy2) - kappa*lap(cxy2) = - u2*dx(cxy2) - v2*dy(cxy2) + cxx2*dx(v2) + cyy2*dy(u2) \
         + cxy2*(dx(u2)+dy(v2)) - (cxy2)*(1.0-2.0*eps+eps*(cxx2+cyy2))*ooWi - lap(lap(cxy2))*ft")
-problem.add_equation("dt(cyy2) - ooSc*lap(cyy2) = - u2*dx(cyy2) - v2*dy(cyy2) + 2.0*cxy2*dx(v2) + 2.0*cyy2*dy(v2) \
+problem.add_equation("dt(cyy2) - kappa*lap(cyy2) = - u2*dx(cyy2) - v2*dy(cyy2) + 2.0*cxy2*dx(v2) + 2.0*cyy2*dy(v2) \
         - (cyy2-1.0)*(1.0-2.0*eps+eps*(cxx2+cyy2))*ooWi - lap(lap(cyy2))*ft") 
                                   
 problem.add_equation("dx(u2) + dy(v2) + tau_p2 = 0")  # Divergence free condition
@@ -246,7 +245,7 @@ analysis.add_task(d3.Average(4*(cxx2+cyy2-cxx1-cyy1)*(dx(u1)*(cxx2-cxx1) + (dy(u
 analysis.add_task(d3.Average(4*(cxx2+cyy2-cxx1-cyy1)*(dx(u2-u1)*(cxx1) + (dy(u2-u1)+dx(v2-v1))*(cxy1) + dy(v2-v1)*(cyy1)),('x', 'y')), layout='g',name='<dG_UC2>') # UC2 in Gamma_Delta eqn
 analysis.add_task(d3.Average(4*(cxx2+cyy2-cxx1-cyy1)*(dx(u2-u1)*(cxx2-cxx1) + (dy(u2-u1)+dx(v2-v1))*(cxy2-cxy1) + dy(v2-v1)*(cyy2-cyy1)),('x', 'y')), layout='g',name='<dG_UC3>') # UC3 in Gamma_Delta eqn
 analysis.add_task(d3.Average((2.0/Wi)*(1+2*eps*(cxx1+cyy1)+eps*(cxx2+cyy2-cxx1-cyy1))*(cxx2+cyy2-cxx1-cyy1)**2,('x', 'y')), layout='g',name='<dG_R>') # SOURCE in Gamma_Delta eqn
-analysis.add_task(d3.Average((2.0*ooSc)*((dx(cxx2+cyy2-cxx1-cyy1))**2 + (dy(cxx2+cyy2-cxx1-cyy1))**2),('x', 'y')), layout='g',name='<dG_D>') # DIFFUSION in Gamma_Delta eqn
+analysis.add_task(d3.Average((2.0*kappa)*((dx(cxx2+cyy2-cxx1-cyy1))**2 + (dy(cxx2+cyy2-cxx1-cyy1))**2),('x', 'y')), layout='g',name='<dG_D>') # DIFFUSION in Gamma_Delta eqn
 
 # =================================================================================================
 # Main loop 

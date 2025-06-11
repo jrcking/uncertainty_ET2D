@@ -27,7 +27,7 @@ Re = unc_params.Re
 Wi= unc_params.Wi
 beta=unc_params.beta
 eps = unc_params.eps
-Sc=unc_params.Sc
+kappa=unc_params.kappa
 Deltat0=unc_params.Deltat0
 ptbnmag=unc_params.ptbnmag
 
@@ -44,7 +44,6 @@ dtype = np.float64
 coef_s = beta/Re # Solvent viscous coefficient
 coef_p = (1.0-beta)/(Re*Wi) # Polymeric coefficient
 ooWi = 1.0/Wi
-ooSc = 1.0/Sc
 
 # Bases
 coords = d3.CartesianCoordinates('x', 'y')

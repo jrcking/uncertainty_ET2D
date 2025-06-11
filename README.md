@@ -1,5 +1,5 @@
 # uncertainty_ET2D
-Scripts for simulations in uncertainty paper.
+Scripts for simulations in uncertainty paper. Requires installation of Dedalus3, and some python.
 
 Modify *unc_params.py* to set parameters as desired.
 
